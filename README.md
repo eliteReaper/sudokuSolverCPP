@@ -9,6 +9,8 @@
   - Fastest(not recommended): g++ -Ofast solver.cpp -o solver.exe
   
 - # Running
+  - Put your sudoku puzzle in puzzle.txt, use numbers to represent given data and 0(Zero) to represent missing data.
+  - Also put the size of the sudoku on the first line(look at examples in /puzzles)
   - ./solver.exe
 
 
