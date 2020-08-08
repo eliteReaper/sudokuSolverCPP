@@ -7,14 +7,14 @@ using namespace std;
 using namespace std::chrono;
 
 vector<int> *tally;
-string puzzle = "empty4.txt";
+string puzzle = "puzzles/grid5.txt";
 int perfCounter = 0;
 
-Node* chooseColumn(Node* root){
+Node* chooseColumn(Node* root) {
     Node *lowest = nullptr, *temp = root->right;
     int mn = 1000000000;
-    while(temp!=root){
-        if(temp->ones < mn){
+    while (temp!=root) {
+        if (temp->ones < mn) {
             mn = temp->ones;
             lowest = temp;
         }
@@ -23,14 +23,14 @@ Node* chooseColumn(Node* root){
     return lowest;
 }
 
-void cover(Node *col){
+void cover(Node *col) {
     col->right->left = col->left;
     col->left->right = col->right;
 
     Node *currRow = col->down, *temp;
-    while(currRow!=col){
+    while (currRow!=col) {
         temp = currRow->right;
-        while(temp!=currRow){
+        while (temp!=currRow) {
             temp->colHeader->ones-=1;
             temp->up->down = temp->down;
             temp->down->up = temp->up;
@@ -40,12 +40,12 @@ void cover(Node *col){
     }
 }
 
-void uncover(Node *col){
+void uncover(Node *col) {
     Node* currRow = col->up, *temp;
 
-    while(currRow!=col){
+    while (currRow!=col) {
         temp = currRow->left;
-        while(temp!=currRow){
+        while (temp!=currRow) {
             temp->colHeader->ones+=1;
             temp->up->down = temp;
             temp->down->up = temp;
@@ -57,47 +57,47 @@ void uncover(Node *col){
     col->right->left = col;
 }
 
-void printSolution(vector<int> &ps){
+void printSolution(vector<int> &ps) {
     auto sudoku = getSudoku(puzzle);
     int **grid = sudoku.first, n = sudoku.second;
     // int grid[4][4], n = 4;
 
-    for(auto elem: ps){
+    for (auto elem: ps) {
         grid[tally[elem][0]][tally[elem][1]] = tally[elem][2];
     }
 
     fstream fout;
     fout.open("answers.txt", ios::out);
-    for(int i = 0; i<n; ++i){
-        for(int j = 0; j<n; ++j)
+    for (int i = 0; i<n; ++i) {
+        for (int j = 0; j<n; ++j)
             fout << grid[i][j] << " ";
         fout << "\n";
     }
     fout.close();
 }
 
-bool search(Node *root, vector<int> &partialSolution){
+bool search(Node *root, vector<int> &partialSolution) {
     // No column left to cover
     perfCounter+=1;
-    if((root->left == root) && (root->right == root)){
+    if ((root->left == root) && (root->right == root)) {
         printSolution(partialSolution);
         return true;
     }
     Node *col = chooseColumn(root), *curr = col->down, *currRow;
     cover(col);
-    while(curr!=col){
+    while (curr!=col) {
         partialSolution.push_back(curr->row);
         currRow = curr->right;
-        while(currRow!=curr){
+        while (currRow!=curr) {
             cover(currRow->colHeader);
             currRow = currRow->right;
         }
 
-        if(search(root, partialSolution))
+        if (search(root, partialSolution))
             return true;
-        
+
         currRow = curr->left;
-        while(currRow!=curr){
+        while (currRow!=curr) {
             uncover(currRow->colHeader);
             currRow = currRow->left;
         }
@@ -110,12 +110,12 @@ bool search(Node *root, vector<int> &partialSolution){
     return false;
 }
 
-void printColWise(Node* root){
+void printColWise(Node* root) {
     Node *temp = root->right;
     int cnt = 0;
-    while(temp!=root){
+    while (temp!=root) {
         Node *goDown = temp->down;
-        while(goDown!=temp){
+        while (goDown!=temp) {
             ++cnt;
             goDown = goDown->down;
         }
@@ -125,20 +125,20 @@ void printColWise(Node* root){
 
 
 
-int main(){
+int main() {
     auto start = high_resolution_clock::now();
     auto res = get_dlx(puzzle);
     Node *root = res.first;
     tally = res.second;
     vector<int> ps;
 
-    if(!search(root, ps))
+    if (!search(root, ps))
         cout << "No Solution Possible!!!";
     auto stop = high_resolution_clock::now();
 
     auto duration = duration_cast<microseconds>(stop - start);
 
     cout << "Time: " << duration.count()/1000.0 << " ms" << endl;
-    
+
     return 0;
 }
