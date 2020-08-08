@@ -11,7 +11,7 @@
 - # Running
   - Put your sudoku puzzle in puzzle.txt, use numbers to represent given data and 0(Zero) to represent missing data.
   - Also put the size of the sudoku on the first line(look at examples in /puzzles)
-  - ./solver.exe
+  - Execute ./solver.exe in the terminal while in the root directory of the project.
 
 
 # How did I achieve this speed ?
@@ -24,3 +24,5 @@
 - 9 X 9 sudoku: 2.029 ms
 - 16 X 16: 4.986 ms
 - 25 X 25: 15.957 ms
+
+# Will be adding a GUI soon
